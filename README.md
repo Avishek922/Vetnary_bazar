@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -69,3 +70,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 # vetshop-e-commerce-
 digital (single vendor) ecommerce platfom for  vetnory shop
 >>>>>>> e178dee4b6f8334cd497014b9e3487d0d64f3b09
+=======
+# Vetnary_bazar
+A premium pet-care platform that delivers veterinary products, specialized pet foods, and care items directly to pet owners, with a focus on trusted quality and personalized service.
+>>>>>>> c849b94a4eebcfbf4fff8272f29569ed9e7d03e8
