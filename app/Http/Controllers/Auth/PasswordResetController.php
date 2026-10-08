@@ -9,6 +9,8 @@ use App\Mail\PasswordResetOtpEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class PasswordResetController extends Controller
@@ -64,7 +66,7 @@ class PasswordResetController extends Controller
     // Show OTP verification form
     public function showVerifyForm()
     {
-        if (!session('email')) {
+        if (!session('email') && !old('email')) {
             return redirect()->route('password.request');
         }
         return view('auth.password.verify-otp');
@@ -83,13 +85,17 @@ class PasswordResetController extends Controller
             ->first();
 
         if (!$otpRecord) {
-            return back()->withErrors(['otp' => 'Invalid OTP code.']);
+            return back()->withInput()->with('email', $request->email)->withErrors(['otp' => 'Invalid OTP code.']);
         }
 
         if ($otpRecord->isExpired()) {
             $otpRecord->delete();
-            return back()->withErrors(['otp' => 'OTP has expired. Please request a new one.']);
+            return back()->withInput()->with('email', $request->email)->withErrors(['otp' => 'OTP has expired. Please request a new one.']);
         }
+
+        // Clear OTP verification rate limiter on success
+        $throttleKey = Str::transliterate(Str::lower($request->email) . '|' . $request->ip());
+        RateLimiter::clear(md5('otp-verify' . $throttleKey));
 
         // OTP is valid, redirect to password reset form
         return redirect()->route('password.reset.form')->with([

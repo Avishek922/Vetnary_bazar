@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -23,6 +25,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            // Clear login rate limiter on success
+            $email = Str::lower((string) $request->input('email'));
+            $throttleKey = Str::transliterate($email . '|' . $request->ip());
+            RateLimiter::clear(md5('login' . $throttleKey));
 
             if (Auth::user()->role !== 'user') {
                 return redirect()->intended('admin/dashboard');
